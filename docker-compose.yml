@@ -1,0 +1,22 @@
+version: '3'
+services:
+  testdb:
+    image: 'mysql:5.7'
+    container_name: ${CONTAINER_NAME:-mydb}
+    volumes:
+      - ./data/init:/docker-entrypoint-initdb.d
+      - ./data/logs/general.log:/var/log/mysql/general-log.log
+    command: |
+      mysqld
+        --general-log=1
+        --general-log-file=/var/lib/mysql/general-log.log
+        --character-set-server=utf8mb4
+        --collation-server=utf8mb4_unicode_ci
+        --sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-mypassword}
+      MYSQL_USER: ${MYSQL_USER:-myuser}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mydb}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-myrootpassword}
+    ports:
+      - '${MYSQL_EXT_PORT:-3306}:3306'
